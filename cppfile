@@ -11,14 +11,23 @@ fi
 for filename in "$@"; do
     base_name="${filename%.*}"
     extension="${filename##*.}"
-    if [ "$base_name" != "main" ]; then
-        base_name="${base_name#main.}"
+
+    target_filename="${filename}"
+
+    if [[ "$filename" == "main."* && "$filename" != "main.cpp" ]]; then
+        target_filename="${base_name#main.}.${extension}"
     fi
-	if [ -f "${filename}" ]; then
-    	echo "Il file ${filename} esiste gia, nessuna operazione eseguita."
-    	continue
+
+    if [ -f "${target_filename}" ]; then
+        echo "Il file ${target_filename} esiste gia, nessuna operazione eseguita."
+        continue
     fi
-    touch "${filename}"
+
+    if [[ "$filename" != "$target_filename" ]]; then
+        touch "${target_filename}"
+    else
+        touch "${filename}"
+    fi
 
     if [ "$filename" == "Makefile" ]; then
         echo "CXX = g++" > "${filename}"
@@ -114,7 +123,4 @@ for filename in "$@"; do
             fi
         fi
     fi
-	if [[ "${filename}" == "main."* && "${filename}" != "main.cpp" ]]; then
-    rm -f "${filename}"
-	fi
 done
