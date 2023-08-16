@@ -1,0 +1,113 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+    echo "Uso: Crea file.cpp SE minuscolo crea file cpp vuoto"
+    echo "SE maiuscolo crea File.cpp File.hpp"
+    echo "SE Makefile crea Makefile"
+    echo "SE inizia con main. crea main (Esempio: main.a.cpp = a.cpp) SE main.cpp == main.cpp."
+    exit 1
+fi
+
+for filename in "$@"; do
+    base_name="${filename%.*}"
+    extension="${filename##*.}"
+    if [ "$base_name" != "main" ]; then
+        base_name="${base_name#main.}"
+    fi
+    touch "${filename}"
+
+    if [ "$filename" == "Makefile" ]; then
+        echo "CXX = g++" > "${filename}"
+        echo "CXXFLAGS = -std=c++98 -Wall -Werror -Wextra" >> "${filename}"
+        echo "TARGET = program" >> "${filename}"
+        echo "" >> "${filename}"
+        echo "all: \$(TARGET)" >> "${filename}"
+        echo "" >> "${filename}"
+        echo "\$(TARGET): *.cpp" >> "${filename}"
+        echo "	\$(CXX) \$(CXXFLAGS) -o \$(TARGET) *.cpp" >> "${filename}"
+        echo "" >> "${filename}"
+        echo "clean:" >> "${filename}"
+        echo "	rm -f \$(TARGET) *.o" >> "${filename}"
+        echo "" >> "${filename}"
+        echo "fclean: clean" >> "${filename}"
+        echo "	rm -f \$(TARGET)" >> "${filename}"
+        echo "" >> "${filename}"
+        echo "re: fclean all" >> "${filename}"
+
+         echo "Creato ${filename}"
+        elif [[ "$filename" == "main."* ]]; then
+            cpp_filename="${base_name}.cpp"
+            echo "int main()" >> "${cpp_filename}"
+            echo "{" >> "${cpp_filename}"
+            echo "    return 0;" >> "${cpp_filename}"
+            echo "}" >> "${cpp_filename}"
+
+            echo "Created ${filename} and ${cpp_filename}"
+    else
+        if [ "$extension" == "hpp" ]; then
+            echo "#ifndef ${base_name^^}_HPP" > "${filename}"
+            echo "#define ${base_name^^}_HPP" >> "${filename}"
+            echo "" >> "${filename}"
+			echo "#include <iostream>" >> "${filename}"
+			echo "" >> "${filename}"
+            echo "class ${base_name}" >> "${filename}"
+            echo "{" >> "${filename}"
+            echo "private:" >> "${filename}"
+            echo "" >> "${filename}"
+            echo "public:" >> "${filename}"
+            echo "    ${base_name}();" >> "${filename}"
+            echo "    ~${base_name}();" >> "${filename}"
+            echo "};" >> "${filename}"
+            echo "" >> "${filename}"
+            echo "#endif" >> "${filename}"
+
+            echo "Creato ${filename}"
+        else
+            if [[ $base_name =~ ^[A-Z] ]]; then
+                touch "${base_name}.hpp"
+                echo "#ifndef ${base_name^^}_HPP" > "${base_name}.hpp"
+                echo "#define ${base_name^^}_HPP" >> "${base_name}.hpp"
+                echo "" >> "${base_name}.hpp"
+				echo "#include <iostream>" >> "${base_name}.hpp"
+				echo "" >> "${base_name}.hpp"
+                echo "class ${base_name}" >> "${base_name}.hpp"
+                echo "{" >> "${base_name}.hpp"
+                echo "private:" >> "${base_name}.hpp"
+                echo "" >> "${base_name}.hpp"
+                echo "public:" >> "${base_name}.hpp"
+                echo "    ${base_name}();" >> "${base_name}.hpp"
+                echo "    ~${base_name}();" >> "${base_name}.hpp"
+                echo "};" >> "${base_name}.hpp"
+                echo "" >> "${base_name}.hpp"
+                echo "#endif" >> "${base_name}.hpp"
+
+                echo "#include \"${base_name}.hpp\"" > "${filename}"
+                echo "" >> "${filename}"
+                echo "${base_name}::${base_name}()" >> "${filename}"
+                echo "{" >> "${filename}"
+                echo "}" >> "${filename}"
+                echo "" >> "${filename}"
+                echo "${base_name}::~${base_name}()" >> "${filename}"
+                echo "{" >> "${filename}"
+                echo "}" >> "${filename}"
+
+ 				  if [[ "$filename" == "main."* ]]; then
+                    cpp_filename="${base_name}.cpp"
+                    echo "#include \"${base_name}.hpp\"" > "${cpp_filename}"
+                    echo "" >> "${cpp_filename}"
+                    echo "int main()" >> "${cpp_filename}"
+                    echo "{" >> "${cpp_filename}"
+                    echo "    ${base_name} *a;" >> "${cpp_filename}"
+                    echo "    return 0;" >> "${cpp_filename}"
+                    echo "}" >> "${cpp_filename}"
+
+                    echo "Created ${filename} and ${cpp_filename}"
+                else
+                    echo "Created ${filename}"
+                fi
+            else
+                echo "Created ${filename}"
+            fi
+        fi
+    fi
+done
