@@ -15,8 +15,8 @@ for filename in "$@"; do
         base_name="${base_name#main.}"
     fi
 	if [ -f "${filename}" ]; then
-        echo "Il file ${filename} esiste gia, nessuna operazione eseguita."
-        continue
+    	echo "Il file ${filename} esiste gia, nessuna operazione eseguita."
+    	continue
     fi
     touch "${filename}"
 
@@ -38,7 +38,7 @@ for filename in "$@"; do
         echo "" >> "${filename}"
         echo "re: fclean all" >> "${filename}"
 
-         echo "Creato ${filename}"
+         echo "Created ${filename}"
         elif [[ "$filename" == "main."* ]]; then
             cpp_filename="${base_name}.cpp"
             echo "int main()" >> "${cpp_filename}"
@@ -65,7 +65,7 @@ for filename in "$@"; do
             echo "" >> "${filename}"
             echo "#endif" >> "${filename}"
 
-            echo "Creato ${filename}"
+            echo "Created ${filename}"
         else
             if [[ $base_name =~ ^[A-Z] ]]; then
                 touch "${base_name}.hpp"
@@ -114,4 +114,7 @@ for filename in "$@"; do
             fi
         fi
     fi
+	if [[ "${filename}" == "main."* && "${filename}" != "main.cpp" ]]; then
+    rm -f "${filename}"
+	fi
 done
