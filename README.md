@@ -6,4 +6,4 @@ SE maiuscolo crea File.cpp File.hpp
 SE Makefile crea Makefile  
 SE inizia con main. crea main (Esempio: main.a.cpp = a.cpp) SE main.cpp == main.cpp.
 
-Edit: Non sovrascrive più i file gia esistenti
+Edit: Non sovrascrive più i file gia esistenti 
